@@ -25,7 +25,7 @@ public class SwiftFlutterWebAuthPlugin: NSObject, FlutterPlugin {
                             result(FlutterError(code: "CANCELED", message: "User canceled login", details: nil))
                             return
                         }
-                    } else {
+                    } else if #available(iOS 11, *) {
                         if case SFAuthenticationError.Code.canceledLogin = err {
                             result(FlutterError(code: "CANCELED", message: "User canceled login", details: nil))
                             return
@@ -53,10 +53,12 @@ public class SwiftFlutterWebAuthPlugin: NSObject, FlutterPlugin {
 
                 session.start()
                 keepMe = session
-            } else {
+            } else if #available(iOS 11, *) {
                 let session = SFAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, completionHandler: completionHandler)
                 session.start()
                 keepMe = session
+            } else {
+                result(FlutterError(code: "FAILED", message: "iOS version not supported" , details: nil))
             }
         } else {
             result(FlutterMethodNotImplemented)
